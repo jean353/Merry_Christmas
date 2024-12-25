@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Merry Christmas!</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet"> <!-- Lien vers Google Fonts -->
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #fff; /* Texte par défaut en blanc */
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+            position: relative;
+            transition: background 0.5s; /* Transition douce pour le changement de fond */
+        }
+        .light-mode {
+            background: linear-gradient(135deg, #ff7f50, #ff6347); /* Dégradé coloré clair */
+            color: #000; /* Texte noir en mode clair */
+        }
+        .dark-mode {
+            background: linear-gradient(135deg, #2c3e50, #34495e); /* Dégradé sombre */
+            color: yellow; /* Texte jaune en mode sombre */
+        }
+        h1 {
+            font-size: 4em;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+            margin-top: 20px; /* Décalage vers le haut */
+        }
+        canvas {
+            border: 2px solid white; /* Bordure blanche pour le canvas */
+            margin-top: 20px;
+        }
+        footer {
+            position: absolute;
+            bottom: 10px;
+            font-size: 1.5em; /* Taille de la police de la signature */
+            text-align: center;
+            font-family: 'Dancing Script', cursive; /* Police esthétique pour la signature */
+        }
+        #toggleButton {
+            position: absolute;
+            top: 20px; /* Positionné en haut */
+            right: 20px; /* Positionné à droite */
+            padding: 10px;
+            background-color: rgba(255, 255, 255, 0.8); /* Fond blanc semi-transparent */
+            border: none; /* Pas de bordure */
+            border-radius: 5px; /* Coins arrondis */
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Ombre */
+            transition: background-color 0.3s, transform 0.3s; /* Transition douce */
+            font-size: 1.5em; /* Taille de police pour le symbole */
+        }
+        #toggleButton:hover {
+            background-color: rgba(255, 255, 255, 1); /* Fond blanc plein au survol */
+            transform: scale(1.05); /* Agrandir légèrement au survol */
+        }
+        .star {
+            position: absolute;
+            top: 20px; /* Décalage en haut de la page */
+            width: 50px;
+            height: 50px;
+            background-color: yellow;
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+        }
+    </style>
+</head>
+<body class="light-mode">
+
+    <div class="star"></div> <!-- Étoile en haut de la page -->
+    <h1 id="message">Merry Christmas!</h1>
+    <button id="toggleButton">🌙</button> <!-- Icône de lune par défaut -->
+    <canvas id="treeCanvas" width="400" height="500"></canvas>
+    <footer>BY Jean NENENOR</footer> <!-- Signature -->
+
+    <script>
+        const messages = [
+            "Merry Christmas!", // Anglais
+            "Joyeux Noël!", // Français
+            "Feliz Navidad!", // Espagnol
+            "Buon Natale!", // Italien
+            "Frohe Weihnachten!", // Allemand
+            "メリークリスマス!", // Japonais
+            "С Рождеством!", // Russe
+            "Selamat Natal!" // Indonésien
+        ];
+
+        let currentIndex = 0;
+
+        function changeMessage() {
+            document.getElementById('message').innerText = messages[currentIndex];
+            currentIndex = (currentIndex + 1) % messages.length;
+        }
+
+        setInterval(changeMessage, 5000); // Change le message toutes les 5 secondes
+        changeMessage(); // Afficher le premier message immédiatement
+
+        const canvas = document.getElementById('treeCanvas');
+        const ctx = canvas.getContext('2d');
+        let ornaments = [];
+        let mouseOverTree = false; // État de survol de la souris
+
+        function drawTree() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height); // Effacer le canvas
+
+            // Tronc
+            ctx.fillStyle = '#8B4513'; // Couleur marron
+            ctx.fillRect(170, 400, 60, 30); // Tronc
+
+            // Feuilles
+            ctx.fillStyle = mouseOverTree ? '#A0D65C' : '#228B22'; // Changer de couleur au survol
+            ctx.beginPath();
+            ctx.moveTo(200, 100); // Sommet du sapin
+            ctx.lineTo(150, 250); // Gauche
+            ctx.lineTo(250, 250); // Droite
+            ctx.closePath();
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.moveTo(200, 150); // Sommet du milieu
+            ctx.lineTo(130, 300); // Gauche
+            ctx.lineTo(270, 300); // Droite
+            ctx.closePath();
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.moveTo(200, 200); // Sommet du bas
+            ctx.lineTo(110, 350); // Gauche
+            ctx.lineTo(290, 350); // Droite
+            ctx.closePath();
+            ctx.fill();
+
+            // Décorations
+            ornaments = []; // Réinitialiser les décorations
+            for (let i = 0; i < 10; i++) { // Limiter à 10 décorations
+                const x = Math.random() * 250 + 125; // Position horizontale
+                const y = Math.random() * 150 + 100; // Position verticale
+                ornaments.push({ x, y, visible: true }); // Ajouter à la liste des décorations
+            }
+
+            // Dessiner les décorations
+            ornaments.forEach(ornament => {
+                if (ornament.visible) {
+                    ctx.beginPath();
+                    ctx.arc(ornament.x, ornament.y, 5, 0, Math.PI * 2); // Boules
+                    ctx.fillStyle = Math.random() > 0.5 ? 'red' : 'gold'; // Couleurs alternées
+                    ctx.fill();
+                }
+            });
+        }
+
+        function animate() {
+            drawTree();
+            // Faire scintiller les décorations
+            ornaments.forEach(ornament => {
+                ornament.visible = Math.random() > 0.85; // Alterner la visibilité avec un taux réduit
+            });
+            requestAnimationFrame(animate); // Appeler la fonction d'animation
+        }
+
+        // Événements de la souris
+        canvas.addEventListener('mouseenter', () => {
+            mouseOverTree = true; // Survoler le sapin
+        });
+
+        canvas.addEventListener('mouseleave', () => {
+            mouseOverTree = false; // Quitter le sapin
+        });
+
+        // Fonction pour basculer entre le mode sombre et clair
+        document.getElementById('toggleButton').addEventListener('click', () => {
+            const body = document.body;
+            body.classList.toggle('dark-mode');
+            body.classList.toggle('light-mode');
+
+            const button = document.getElementById('toggleButton');
+            if (body.classList.contains('dark-mode')) {
+                button.innerText = '☀️'; // Icône de soleil en mode sombre
+            } else {
+                button.innerText = '🌙'; // Icône de lune en mode clair
+            }
+        });
+
+        animate(); // Démarrer l'animation
+
+    </script>
+</body>
+</html>
