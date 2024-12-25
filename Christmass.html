@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Joyeux Noël - Merry Christmas 2024</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Mountains+of+Christmas:wght@700&family=Poppins:wght@300;400;600;700&display=swap');
+
+        :root {
+            --christmas-red: #D42426;
+            --dark-red: #9B0103;
+            --snow-white: #FFFFFF;
+            --light-gray: #F3F3F3;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--snow-white);
+            overflow-x: hidden;
+            color: var(--dark-red);
+        }
+
+        .snowfall {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        .snowflake {
+            position: absolute;
+            color: white;
+            font-size: 1em;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            0% { transform: translateY(-100vh); }
+            100% { transform: translateY(100vh); }
+        }
+
+        .hero {
+            background: linear-gradient(135deg, var(--christmas-red), var(--dark-red));
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 20px;
+        }
+
+        .hero-content {
+            text-align: center;
+            color: var(--snow-white);
+            position: relative;
+            z-index: 2;
+        }
+
+        .christmas-title {
+            font-family: 'Mountains of Christmas', cursive;
+            font-size: 6em;
+            margin-bottom: 0.5em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        .christmas-subtitle {
+            font-size: 1.5em;
+            margin-bottom: 2em;
+            font-weight: 300;
+        }
+
+        .countdown-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 2em;
+            display: flex;
+            justify-content: center;
+            gap: 2em;
+            margin-top: 2em;
+        }
+
+        .countdown-item {
+            text-align: center;
+        }
+
+        .countdown-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 0.2em;
+        }
+
+        .countdown-label {
+            font-size: 0.9em;
+            text-transform: uppercase;
+        }
+
+        .decoration {
+            position: absolute;
+            font-size: 2em;
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        .message-section {
+            padding: 4em 2em;
+            text-align: center;
+            background-color: var(--snow-white);
+            position: relative;
+        }
+
+        .message-card {
+            max-width: 800px;
+            margin: 0 auto;
+            background: linear-gradient(to right bottom, var(--christmas-red), var(--dark-red));
+            color: var(--snow-white);
+            padding: 3em;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transform-style: preserve-3d;
+            transform: perspective(1000px);
+            transition: transform 0.3s ease;
+        }
+
+        @keyframes glow {
+            from {
+                text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px var(--christmas-red);
+            }
+            to {
+                text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px var(--christmas-red);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .christmas-title {
+                font-size: 3em;
+            }
+
+            .countdown-container {
+                flex-wrap: wrap;
+                gap: 1em;
+            }
+
+            .countdown-item {
+                width: 45%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="snowfall"></div>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1 class="christmas-title">Merry Christmas</h1>
+            <p class="christmas-subtitle">Que la magie de Noël illumine vos cœurs</p>
+            
+            <div class="countdown-container">
+                <div class="countdown-item">
+                    <div class="countdown-number" id="days">00</div>
+                    <div class="countdown-label">Jours</div>
+                </div>
+                <div class="countdown-item">
+                    <div class="countdown-number" id="hours">00</div>
+                    <div class="countdown-label">Heures</div>
+                </div>
+                <div class="countdown-item">
+                    <div class="countdown-number" id="minutes">00</div>
+                    <div class="countdown-label">Minutes</div>
+                </div>
+                <div class="countdown-item">
+                    <div class="countdown-number" id="seconds">00</div>
+                    <div class="countdown-label">Secondes</div>
+                </div>
+            </div>
+        </div>
+        <script>
+            // Array of Christmas greetings in different languages
+const greetings = [
+    { text: "Merry Christmas", subtitle: "May the magic of Christmas illuminate your hearts" },
+    { text: "Joyeux Noël", subtitle: "Que la magie de Noël illumine vos cœurs" },
+    { text: "Feliz Navidad", subtitle: "Que la magia de la Navidad ilumine sus corazones" },
+    { text: "Frohe Weihnachten", subtitle: "Möge der Zauber der Weihnacht eure Herzen erleuchten" },
+    { text: "Buon Natale", subtitle: "Che la magia del Natale illumini i vostri cuori" }
+];
+
+let currentIndex = 0;
+const title = document.querySelector('.christmas-title');
+const subtitle = document.querySelector('.christmas-subtitle');
+
+// Function to update the greeting
+function updateGreeting() {
+    title.style.opacity = '0';
+    subtitle.style.opacity = '0';
+    
+    setTimeout(() => {
+        currentIndex = (currentIndex + 1) % greetings.length;
+        title.textContent = greetings[currentIndex].text;
+        subtitle.textContent = greetings[currentIndex].subtitle;
+        
+        title.style.opacity = '1';
+        subtitle.style.opacity = '1';
+    }, 500);
+}
+
+// Initial delay of 5 seconds before starting rotation
+setTimeout(() => {
+    // Add CSS transitions for smooth fade effect
+    title.style.transition = 'opacity 0.5s ease-in-out';
+    subtitle.style.transition = 'opacity 0.5s ease-in-out';
+    
+    // Start rotating greetings every 5 seconds
+    setInterval(updateGreeting, 5000);
+}, 5000);
+
+// Countdown timer code
+function updateCountdown() {
+    const christmas = new Date('December 25, 2024 00:00:00').getTime();
+    const now = new Date().getTime();
+    const distance = christmas - now;
+
+    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+    document.getElementById('days').textContent = String(days).padStart(2, '0');
+    document.getElementById('hours').textContent = String(hours).padStart(2, '0');
+    document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
+    document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
+}
+
+// Update countdown every second
+setInterval(updateCountdown, 1000);
+// Initial countdown update
+updateCountdown();
+        </script>
+    </section>
+
+    <section class="message-section">
+        <div class="message-card">
+            <h2>Joyeuses Fêtes</h2>
+            <p>En cette période magique de l'année, nous vous souhaitons un merveilleux Noël rempli de joie, d'amour et de moments précieux partagés avec vos proches.</p>
+        </div>
+    </section>
+
+    <script>
+        // Création de la neige
+        function createSnowflakes() {
+            const snowfall = document.querySelector('.snowfall');
+            const snowflakesCount = 50;
+
+            for (let i = 0; i < snowflakesCount; i++) {
+                const snowflake = document.createElement('div');
+                snowflake.className = 'snowflake';
+                snowflake.textContent = '❄';
+                snowflake.style.left = `${Math.random() * 100}%`;
+                snowflake.style.animationDuration = `${Math.random() * 3 + 2}s`;
+                snowflake.style.opacity = Math.random();
+                snowflake.style.fontSize = `${Math.random() * 10 + 10}px`;
+                snowfall.appendChild(snowflake);
+            }
+        }
+
+        // Compte à rebours jusqu'à Noël
+        function updateCountdown() {
+            const christmas = new Date('December 25, 2024 00:00:00').getTime();
+            const now = new Date().getTime();
+            const distance = christmas - now;
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            document.getElementById('days').textContent = days.toString().padStart(2, '0');
+            document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
+            document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
+            document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
+        }
+
+        // Animation de la carte de message
+        document.querySelector('.message-card').addEventListener('mousemove', (e) => {
+            const card = e.currentTarget;
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            const midCardWidth = rect.width / 2;
+            const midCardHeight = rect.height / 2;
+
+            const angleY = -(x - midCardWidth) / 16;
+            const angleX = (y - midCardHeight) / 16;
+
+            card.style.transform = `perspective(1000px) rotateX(${angleX}deg) rotateY(${angleY}deg)`;
+        });
+
+        document.querySelector('.message-card').addEventListener('mouseleave', (e) => {
+            e.currentTarget.style.transform = 'perspective(1000px) rotateX(0) rotateY(0)';
+        });
+
+        // Initialisation
+        createSnowflakes();
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
+    </script>
+    <script>
+        // Créer un conteneur pour les particules
+const particleContainer = document.createElement('div');
+particleContainer.style.cssText = `
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9999;
+`;
+document.body.appendChild(particleContainer);
+
+// Classe pour gérer les particules
+class Particle {
+    constructor(x, y) {
+        this.element = document.createElement('div');
+        this.element.style.cssText = `
+            position: fixed;
+            width: 6px;
+            height: 6px;
+            background: radial-gradient(circle, #fff 0%, rgba(255,255,255,0) 100%);
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0;
+        `;
+        particleContainer.appendChild(this.element);
+        
+        this.x = x;
+        this.y = y;
+        this.angle = Math.random() * Math.PI * 2;
+        this.velocity = 2 + Math.random() * 2;
+        this.life = 0;
+        this.maxLife = 50 + Math.random() * 30;
+        
+        this.update();
+    }
+
+    update() {
+        this.life++;
+        
+        if (this.life <= this.maxLife) {
+            const progress = this.life / this.maxLife;
+            const fadeInProgress = progress < 0.2 ? progress / 0.2 : 1;
+            const fadeOutProgress = progress > 0.8 ? (1 - progress) / 0.2 : 1;
+            
+            this.x += Math.cos(this.angle) * this.velocity;
+            this.y += Math.sin(this.angle) * this.velocity;
+            
+            const scale = Math.min(fadeInProgress, fadeOutProgress);
+            const opacity = Math.min(fadeInProgress, fadeOutProgress);
+            
+            this.element.style.transform = `translate(${this.x}px, ${this.y}px) scale(${scale})`;
+            this.element.style.opacity = opacity;
+            
+            requestAnimationFrame(() => this.update());
+        } else {
+            this.element.remove();
+        }
+    }
+}
+
+// Gérer le mouvement de la souris
+let lastX = 0;
+let lastY = 0;
+let timeoutId = null;
+
+document.addEventListener('mousemove', (e) => {
+    const currentX = e.clientX;
+    const currentY = e.clientY;
+    
+    // Calculer la vitesse de la souris
+    const dx = currentX - lastX;
+    const dy = currentY - lastY;
+    const speed = Math.sqrt(dx * dx + dy * dy);
+    
+    // Créer plus de particules si la souris bouge plus vite
+    const particleCount = Math.floor(speed / 10) + 1;
+    
+    for (let i = 0; i < particleCount; i++) {
+        new Particle(
+            currentX + (Math.random() - 0.5) * 20,
+            currentY + (Math.random() - 0.5) * 20
+        );
+    }
+    
+    lastX = currentX;
+    lastY = currentY;
+    
+    // Ajouter un effet de lumière autour du curseur
+    const cursor = document.createElement('div');
+    cursor.style.cssText = `
+        position: fixed;
+        width: 30px;
+        height: 30px;
+        background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 70%);
+        border-radius: 50%;
+        pointer-events: none;
+        transform: translate(-50%, -50%);
+        z-index: 9998;
+    `;
+    cursor.style.left = `${currentX}px`;
+    cursor.style.top = `${currentY}px`;
+    document.body.appendChild(cursor);
+    
+    // Supprimer l'effet de lumière après un court délai
+    setTimeout(() => cursor.remove(), 100);
+    
+    // Gérer les couleurs aléatoires de Noël
+    if (timeoutId) clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => {
+        const colors = ['#ff0000', '#00ff00', '#ffffff', '#ffff00']; // Rouge, Vert, Blanc, Or
+        const randomColor = colors[Math.floor(Math.random() * colors.length)];
+        particleContainer.style.setProperty('--particle-color', randomColor);
+    }, 100);
+});
+    </script>
+</body>
+</html>
